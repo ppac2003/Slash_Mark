@@ -1,0 +1,58 @@
+public class SelfDrivingCarSimulation {
+
+    // Car class representing the autonomous vehicle
+    static class SelfDrivingCar {
+        private double x; // Current x position
+        private double y; // Current y position
+        private double speed; // Speed of the car
+
+        public SelfDrivingCar(double startX, double startY, double startSpeed) {
+            this.x = startX;
+            this.y = startY;
+            this.speed = startSpeed;
+        }
+
+        // Move the car based on simple rules
+        public void move() {
+            // For simplicity, move in a straight line
+            x += speed;
+            y += speed * 0.5; // Simulate a simple trajectory
+        }
+
+        public void printPosition() {
+            System.out.printf("Car position: (%.2f, %.2f)%n", x, y);
+        }
+    }
+
+    // Simulation class to run the autonomous car
+    public static class Simulation {
+        private SelfDrivingCar car;
+        private int steps;
+
+        public Simulation(SelfDrivingCar car, int steps) {
+            this.car = car;
+            this.steps = steps;
+        }
+
+        public void run() {
+            for (int i = 0; i < steps; i++) {
+                car.move();
+                car.printPosition();
+                try {
+                    Thread.sleep(500); // Simulate time delay
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        // Create a self-driving car with initial position (0,0) and speed 1.0
+        SelfDrivingCar car = new SelfDrivingCar(0, 0, 1.0);
+
+        // Create and run the simulation with 10 steps
+        Simulation simulation = new Simulation(car, 10);
+        simulation.run();
+    }
+}

@@ -1,0 +1,60 @@
+import java.util.HashSet;
+import java.util.Set;
+
+public class SentimentAnalysis {
+
+    private static final Set<String> positiveWords = new HashSet<>();
+    private static final Set<String> negativeWords = new HashSet<>();
+
+    static {
+        // Add some sample positive words
+        positiveWords.add("happy");
+        positiveWords.add("joyful");
+        positiveWords.add("excellent");
+        positiveWords.add("good");
+        positiveWords.add("great");
+        
+        // Add some sample negative words
+        negativeWords.add("sad");
+        negativeWords.add("terrible");
+        negativeWords.add("poor");
+        negativeWords.add("bad");
+        negativeWords.add("awful");
+    }
+
+    public static String analyzeSentiment(String text) {
+        int positiveScore = 0;
+        int negativeScore = 0;
+
+        // Convert text to lowercase and split into words
+        String[] words = text.toLowerCase().split("\\s+");
+
+        // Score each word
+        for (String word : words) {
+            if (positiveWords.contains(word)) {
+                positiveScore++;
+            } else if (negativeWords.contains(word)) {
+                negativeScore++;
+            }
+        }
+
+        // Determine sentiment based on scores
+        if (positiveScore > negativeScore) {
+            return "Positive";
+        } else if (negativeScore > positiveScore) {
+            return "Negative";
+        } else {
+            return "Neutral";
+        }
+    }
+
+    public static void main(String[] args) {
+        // Example texts
+        String text1 = "The food was excellent and the service was great!";
+        String text2 = "The experience was awful and the food was terrible.";
+
+        // Analyze and print sentiments
+        System.out.println("Text 1 Sentiment: " + analyzeSentiment(text1));
+        System.out.println("Text 2 Sentiment: " + analyzeSentiment(text2));
+    }
+}

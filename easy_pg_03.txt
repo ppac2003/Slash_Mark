@@ -1,0 +1,45 @@
+import java.util.HashSet;
+import java.util.Set;
+
+public class PlagiarismDetector {
+
+    // Method to calculate Jaccard similarity between two texts
+    public static double calculateJaccardSimilarity(String text1, String text2) {
+        Set<String> set1 = getWordSet(text1);
+        Set<String> set2 = getWordSet(text2);
+
+        Set<String> intersection = new HashSet<>(set1);
+        intersection.retainAll(set2);
+
+        Set<String> union = new HashSet<>(set1);
+        union.addAll(set2);
+
+        return (double) intersection.size() / union.size();
+    }
+
+    // Helper method to convert a text to a set of words
+    private static Set<String> getWordSet(String text) {
+        String[] words = text.toLowerCase().split("\\W+");
+        Set<String> wordSet = new HashSet<>();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                wordSet.add(word);
+            }
+        }
+        return wordSet;
+    }
+
+    public static void main(String[] args) {
+        String text1 = "The quick brown fox jumps over the lazy dog.";
+        String text2 = "The quick brown fox jumped over a lazy dog.";
+
+        double similarity = calculateJaccardSimilarity(text1, text2);
+        System.out.println("Jaccard Similarity: " + similarity);
+
+        if (similarity > 0.8) {
+            System.out.println("Possible plagiarism detected!");
+        } else {
+            System.out.println("No significant similarity found.");
+        }
+    }
+}

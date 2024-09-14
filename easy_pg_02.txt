@@ -1,0 +1,53 @@
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
+import org.deeplearning4j.nn.conf.layers.DenseLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.learning.config.Adam;
+import org.nd4j.linalg.lossfunctions.LossFunctions;
+
+public class DogsVsCatsClassification {
+
+    public static void main(String[] args) {
+        int numClasses = 2; // Dogs and Cats
+        int batchSize = 64;
+        int numEpochs = 10;
+
+        MultiLayerNetwork model = new MultiLayerNetwork(new NeuralNetConfiguration.Builder()
+            .seed(123)
+            .updater(new Adam(0.001))
+            .list()
+            .layer(0, new ConvolutionLayer.Builder(5, 5)
+                .nIn(3) // For RGB images
+                .nOut(20)
+                .activation(Activation.RELU)
+                .build())
+            .layer(1, new ConvolutionLayer.Builder(5, 5)
+                .nOut(50)
+                .activation(Activation.RELU)
+                .build())
+            .layer(2, new DenseLayer.Builder().nOut(500).activation(Activation.RELU).build())
+            .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.XENT)
+                .activation(Activation.SOFTMAX)
+                .nOut(numClasses)
+                .build())
+            .setInputType(InputType.convolutional(28, 28, 3)) // Example input size for RGB
+            .build());
+
+        model.init();
+        model.setListeners(new ScoreIterationListener(10));
+
+        // Load and preprocess your data here
+        // DataSetIterator trainData = ...;
+        // DataSetIterator testData = ...;
+
+        // model.fit(trainData); // Train the model
+
+        // Evaluate the model
+        // Evaluation eval = model.evaluate(testData);
+        // System.out.println(eval.stats());
+    }
+}

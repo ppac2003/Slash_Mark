@@ -1,0 +1,48 @@
+import weka.core.Instances;
+import weka.core.converters.CSVLoader;
+import weka.classifiers.Classifier;
+import weka.classifiers.trees.RandomForest;
+import weka.classifiers.Evaluation;
+import weka.core.DenseInstance;
+import weka.core.Instance;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.Random;
+
+public class CreditCardFraudDetection {
+
+    public static void main(String[] args) throws Exception {
+        // Load data
+        CSVLoader loader = new CSVLoader();
+        loader.setSource(new File("creditcard_transactions.csv"));
+        Instances data = loader.getDataSet();
+
+        // Set class index (target variable)
+        data.setClassIndex(data.numAttributes() - 1);
+
+        // Split data into training and testing sets
+        int trainSize = (int) Math.round(data.numInstances() * 0.8);
+        int testSize = data.numInstances() - trainSize;
+        Instances trainData = new Instances(data, 0, trainSize);
+        Instances testData = new Instances(data, trainSize, testSize);
+
+        // Train RandomForest model
+        RandomForest rf = new RandomForest();
+        rf.buildClassifier(trainData);
+
+        // Evaluate the model
+        Evaluation eval = new Evaluation(trainData);
+        eval.evaluateModel(rf, testData);
+
+        System.out.println(eval.toSummaryString());
+
+        // Predict on a new instance
+        Instance newTransaction = new DenseInstance(data.numAttributes());
+        newTransaction.setValue(data.attribute("amount"), 500.00); // Example feature
+        newTransaction.setDataset(data); // Set dataset to match the model
+
+        double prediction = rf.classifyInstance(newTransaction);
+        System.out.println("Fraudulent: " + (prediction == 1.0 ? "Yes" : "No"));
+    }
+}
